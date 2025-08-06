@@ -15,9 +15,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos del frontend construido
-app.use(express.static(path.join(__dirname, 'client/build')));
-
 // Rutas de la API
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/clients', require('./routes/clients'));
@@ -44,6 +41,9 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Servir archivos estáticos del frontend construido
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 // Servir el frontend React para todas las rutas no API
 app.get('*', (req, res) => {
