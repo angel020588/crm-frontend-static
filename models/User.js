@@ -1,45 +1,104 @@
-const fs = require("fs");
-const path = require("path");
-const Sequelize = require("sequelize");
-const basename = path.basename(__filename);
-require("dotenv").config();
 
-const db = {};
+const { Model } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: "postgres",
-  protocol: "postgres",
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    static associate(models) {
+      // Relación con Client
+      User.hasMany(models.Client, {
+        foreignKey: 'userId',
+        as: 'clients'
+      });
+      
+      // Relación con Lead
+      User.hasMany(models.Lead, {
+        foreignKey: 'userId',
+        as: 'leads'
+      });
+      
+      // Relación con Followup
+      User.hasMany(models.Followup, {
+        foreignKey: 'userId',
+        as: 'followups'
+      });
+      
+      // Relación con Quotation
+      User.hasMany(models.Quotation, {
+        foreignKey: 'userId',
+        as: 'quotations'
+      });
+      
+      // Relación con Subscription
+      User.hasOne(models.Subscription, {
+        foreignKey: 'userId',
+        as: 'subscription'
+      });
+      
+      // Relación con ApiKey
+      User.hasMany(models.ApiKey, {
+        foreignKey: 'userId',
+        as: 'apiKeys'
+      });
+      
+      // Relación con Role
+      User.belongsTo(models.Role, {
+        foreignKey: 'roleId',
+        as: 'role'
+      });
+      
+      // Relación con Notification
+      User.hasMany(models.Notification, {
+        foreignKey: 'userId',
+        as: 'notifications'
+      });
+    }
+  }
+
+  User.init({
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-  },
-  logging: false,
-});
-
-// Cargar todos los modelos
-fs.readdirSync(__dirname)
-  .filter(
-    (file) =>
-      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js",
-  )
-  .forEach((file) => {
-    const model = require(path.join(__dirname, file))(
-      sequelize,
-      Sequelize.DataTypes,
-    );
-    db[model.name] = model;
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    roleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 1,
+      references: {
+        model: 'Roles',
+        key: 'id'
+      }
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+    lastLogin: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+  }, {
+    sequelize,
+    modelName: 'User',
+    tableName: 'Users',
+    timestamps: true,
   });
 
-// Ejecutar associate() si el modelo lo define
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
-
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-module.exports = db;
+  return User;
+};
