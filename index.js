@@ -36,6 +36,17 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/super-admin', require('./routes/super-admin'));
 app.use('/api/webhooks', require('./routes/webhooks'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/automation', require('./routes/automation'));
+
+// Ruta de salud
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'CRM ProSeller API funcionando',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Ruta catch-all: servir el React app para rutas del frontend
 app.get('*', (req, res) => {
@@ -66,27 +77,6 @@ sequelize
     process.exit(1);
   });
 
-// Rutas de la API adicionales (estas se agregarían después de la lógica de sincronización inicial)
-app.use('/api/analytics', require('./routes/analytics'));
-app.use('/api/automation', require('./routes/automation'));
-
-// Ruta de prueba
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'CRM ProSeller API funcionando',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Servir archivos estáticos del frontend construido (esto ya está cubierto arriba, pero se mantiene por si acaso hay una razón para duplicarlo o se refiere a una configuración diferente)
-app.use(express.static(path.join(__dirname, 'client/build')));
-
-// Servir el frontend React para todas las rutas no API (esto ya está cubierto arriba)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
-
 // Manejo de errores
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
@@ -96,21 +86,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Iniciar servidor (este bloque de `app.listen` es el que se ejecutará si la sincronización de la base de datos es exitosa)
-// El `app.listen` dentro del bloque `.then` de `sequelize.sync` es el principal punto de inicio del servidor.
-// Este bloque final de `app.listen` es redundante si el de arriba funciona correctamente.
-// Para evitar la duplicación de puertos, nos aseguramos de que solo uno se ejecute.
-// Si el código anterior se ejecutó y lanzó el servidor, este no debería ser necesario.
-// Sin embargo, si `sequelize.sync` no se completa y este código se ejecuta, entonces este sería el punto de inicio.
-// Dado que el objetivo es eliminar la duplicación, se asume que el primer `app.listen` es el correcto.
-
-// Si solo hay un `app.listen` y se gestiona correctamente, este código final de `app.listen` debería eliminarse o fusionarse.
-// Sin embargo, para mantener la estructura original tanto como sea posible y solo eliminar la duplicación de PORT,
-// nos aseguramos de que solo una instancia de `app.listen` esté activa y escuchando en el puerto definido.
-
-// Nota: La estructura original tenía dos bloques `app.listen` y dos declaraciones de `PORT`.
-// Al eliminar la segunda declaración de `PORT` y el segundo `app.listen` (que estaba al final),
-// el código se corrige. El bloque `sequelize.sync().then(() => { app.listen(...) })` es el que se mantiene.
-
-// El siguiente `module.exports` es correcto para exportar la instancia de la aplicación.
 module.exports = app;
