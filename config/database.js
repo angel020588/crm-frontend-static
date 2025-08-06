@@ -1,32 +1,24 @@
 // config/database.js
 const { Sequelize } = require("sequelize");
-require("dotenv").config();
+
+// Fuerza carga explícita desde archivo .env en raíz
+require("dotenv").config({ path: "./.env" });
 
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  console.error("❌ DATABASE_URL no está definido en .env");
-  console.log("📝 Crea un archivo .env basado en .env.example");
-  process.exit(1);
+  throw new Error("❌ DATABASE_URL no está definido o es null");
 }
 
 const sequelize = new Sequelize(connectionString, {
   dialect: "postgres",
+  protocol: "postgres",
   logging: false,
   dialectOptions: {
-    ssl:
-      process.env.NODE_ENV === "production"
-        ? {
-            require: true,
-            rejectUnauthorized: false,
-          }
-        : false,
-  },
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
   },
 });
 

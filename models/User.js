@@ -1,84 +1,46 @@
-// server/models/User.js
-const { Model } = require("sequelize");
-const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const path = require("path");
+const Sequelize = require("sequelize");
+require("dotenv").config();
 
-module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    async comparePassword(password) {
-      return bcrypt.compare(password, this.password);
-    }
-  }
+const basename = path.basename(__filename);
+const db = {};
 
-  User.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      // ✅ Reemplazamos ENUM por foreign key real a tabla Role
-      roleId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: "roles",
-          key: "id",
-        },
-      },
-      isActive: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
-      },
-      permissions: {
-        type: DataTypes.JSON,
-        defaultValue: [],
-      },
+// Crear instancia de Sequelize
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: "postgres",
+  protocol: "postgres",
+  logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
     },
-    {
+  },
+});
+
+// Cargar todos los modelos en el directorio actual (excepto index.js)
+fs.readdirSync(__dirname)
+  .filter(
+    (file) =>
+      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js",
+  )
+  .forEach((file) => {
+    const model = require(path.join(__dirname, file))(
       sequelize,
-      modelName: "User",
-      tableName: "users",
-      timestamps: true,
-      hooks: {
-        beforeCreate: async (user) => {
-          if (user.password) {
-            user.password = await bcrypt.hash(user.password, 10);
-          }
-        },
-        beforeUpdate: async (user) => {
-          if (user.changed("password")) {
-            user.password = await bcrypt.hash(user.password, 10);
-          }
-        },
-      },
-    },
-  );
+      Sequelize.DataTypes,
+    );
+    db[model.name] = model;
+  });
 
-  User.associate = (models) => {
-    // ✅ RELACIÓN User → Role
-    User.belongsTo(models.Role, { foreignKey: "roleId", as: "Role" });
+// Ejecutar asociaciones si están definidas
+Object.keys(db).forEach((modelName) => {
+  if (typeof db[modelName].associate === "function") {
+    db[modelName].associate(db);
+  }
+});
 
-    User.hasMany(models.Client, { foreignKey: "assignedTo" });
-    User.hasMany(models.Lead, { foreignKey: "userId" });
-    User.hasMany(models.Followup, { foreignKey: "assignedTo" });
-    User.hasMany(models.Quotation, { foreignKey: "userId" });
-    User.hasMany(models.Notification, { foreignKey: "userId" });
-    User.hasMany(models.ApiKey, { foreignKey: "userId" });
-    User.hasMany(models.Subscription, { foreignKey: "userId" });
-  };
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-  return User;
-};
+module.exports = db;
