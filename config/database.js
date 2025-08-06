@@ -5,7 +5,9 @@ require("dotenv").config();
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  throw new Error("DATABASE_URL no está definido en .env");
+  console.error("❌ DATABASE_URL no está definido en .env");
+  console.log("📝 Crea un archivo .env basado en .env.example");
+  process.exit(1);
 }
 
 const sequelize = new Sequelize(connectionString, {
