@@ -1,7 +1,16 @@
 
-// server/models/Quotation.js
 module.exports = (sequelize, DataTypes) => {
-  const Quotation = sequelize.define('Quotation', {
+  const { Model } = require('sequelize');
+
+  class Quotation extends Model {
+    static associate(models) {
+      Quotation.belongsTo(models.User, { foreignKey: 'assignedTo', as: 'assignedUser' });
+      Quotation.belongsTo(models.Client, { foreignKey: 'clientId', as: 'client' });
+      Quotation.belongsTo(models.Lead, { foreignKey: 'leadId', as: 'lead' });
+    }
+  }
+
+  Quotation.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -43,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
     },
-    userId: {
+    assignedTo: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -56,15 +65,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: []
     }
   }, {
+    sequelize,
+    modelName: 'Quotation',
     tableName: 'quotations',
     timestamps: true
   });
-
-  Quotation.associate = (models) => {
-    Quotation.belongsTo(models.User, { foreignKey: 'userId' });
-    Quotation.belongsTo(models.Client, { foreignKey: 'clientId' });
-    Quotation.belongsTo(models.Lead, { foreignKey: 'leadId' });
-  };
 
   return Quotation;
 };

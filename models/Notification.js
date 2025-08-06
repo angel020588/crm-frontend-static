@@ -1,23 +1,34 @@
 
-// server/models/Notification.js
 module.exports = (sequelize, DataTypes) => {
-  const Notification = sequelize.define("Notification", {
+  const { Model } = require('sequelize');
+
+  class Notification extends Model {
+    static associate(models) {
+      Notification.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+    }
+  }
+
+  Notification.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    message: { 
-      type: DataTypes.STRING, 
-      allowNull: false 
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
-    type: { 
-      type: DataTypes.STRING, 
-      defaultValue: "info" 
-    }, // success, warning, error, info
-    read: { 
-      type: DataTypes.BOOLEAN, 
-      defaultValue: false 
+    message: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    type: {
+      type: DataTypes.ENUM('info', 'success', 'warning', 'error'),
+      defaultValue: 'info'
+    },
+    isRead: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     },
     userId: {
       type: DataTypes.INTEGER,
@@ -28,13 +39,11 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   }, {
+    sequelize,
+    modelName: 'Notification',
     tableName: 'notifications',
     timestamps: true
   });
-
-  Notification.associate = (models) => {
-    Notification.belongsTo(models.User, { foreignKey: "userId" });
-  };
 
   return Notification;
 };

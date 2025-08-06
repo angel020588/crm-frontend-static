@@ -1,7 +1,16 @@
 
-// server/models/Lead.js
 module.exports = (sequelize, DataTypes) => {
-  const Lead = sequelize.define('Lead', {
+  const { Model } = require('sequelize');
+
+  class Lead extends Model {
+    static associate(models) {
+      Lead.belongsTo(models.User, { foreignKey: 'assignedTo', as: 'assignedUser' });
+      Lead.hasMany(models.Followup, { foreignKey: 'leadId', as: 'followups' });
+      Lead.hasMany(models.Quotation, { foreignKey: 'leadId', as: 'quotations' });
+    }
+  }
+
+  Lead.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -13,10 +22,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: true,
-      validate: { isEmail: true }
+      allowNull: true
     },
     phone: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    whatsapp: {
       type: DataTypes.STRING,
       allowNull: true
     },
@@ -24,32 +36,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    source: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: 'website'
-    },
     status: {
       type: DataTypes.ENUM('nuevo', 'contactado', 'calificado', 'convertido', 'perdido'),
       defaultValue: 'nuevo'
     },
-    notes: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    budget: {
-      type: DataTypes.DECIMAL(10,2),
-      allowNull: true
-    },
-    timeline: {
+    source: {
       type: DataTypes.STRING,
       allowNull: true
     },
-    priority: {
-      type: DataTypes.ENUM('baja', 'media', 'alta'),
-      defaultValue: 'media'
+    notes: {
+      type: DataTypes.JSON,
+      defaultValue: []
     },
-    userId: {
+    tags: {
+      type: DataTypes.JSON,
+      defaultValue: []
+    },
+    assignedTo: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -58,13 +61,11 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   }, {
+    sequelize,
+    modelName: 'Lead',
     tableName: 'leads',
     timestamps: true
   });
-
-  Lead.associate = (models) => {
-    Lead.belongsTo(models.User, { foreignKey: 'userId' });
-  };
 
   return Lead;
 };

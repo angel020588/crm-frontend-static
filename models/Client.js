@@ -1,7 +1,16 @@
 
-// server/models/Client.js
 module.exports = (sequelize, DataTypes) => {
-  const Client = sequelize.define('Client', {
+  const { Model } = require('sequelize');
+
+  class Client extends Model {
+    static associate(models) {
+      Client.belongsTo(models.User, { foreignKey: 'assignedTo', as: 'assignedUser' });
+      Client.hasMany(models.Followup, { foreignKey: 'clientId', as: 'followups' });
+      Client.hasMany(models.Quotation, { foreignKey: 'clientId', as: 'quotations' });
+    }
+  }
+
+  Client.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -52,14 +61,11 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   }, {
+    sequelize,
+    modelName: 'Client',
     tableName: 'clients',
     timestamps: true
   });
-
-  Client.associate = (models) => {
-    Client.belongsTo(models.User, { foreignKey: 'assignedTo' });
-    Client.hasMany(models.Followup, { foreignKey: 'clientId' });
-  };
 
   return Client;
 };

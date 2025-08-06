@@ -1,7 +1,16 @@
 
-// server/models/Followup.js
 module.exports = (sequelize, DataTypes) => {
-  const Followup = sequelize.define('Followup', {
+  const { Model } = require('sequelize');
+
+  class Followup extends Model {
+    static associate(models) {
+      Followup.belongsTo(models.User, { foreignKey: 'assignedTo', as: 'assignedUser' });
+      Followup.belongsTo(models.Client, { foreignKey: 'clientId', as: 'client' });
+      Followup.belongsTo(models.Lead, { foreignKey: 'leadId', as: 'lead' });
+    }
+  }
+
+  Followup.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -56,15 +65,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     }
   }, {
+    sequelize,
+    modelName: 'Followup',
     tableName: 'followups',
     timestamps: true
   });
-
-  Followup.associate = (models) => {
-    Followup.belongsTo(models.User, { foreignKey: 'assignedTo' });
-    Followup.belongsTo(models.Client, { foreignKey: 'clientId' });
-    Followup.belongsTo(models.Lead, { foreignKey: 'leadId' });
-  };
 
   return Followup;
 };

@@ -1,6 +1,14 @@
-// server/models/Subscription.js
+
 module.exports = (sequelize, DataTypes) => {
-  const Subscription = sequelize.define('Subscription', {
+  const { Model } = require('sequelize');
+
+  class Subscription extends Model {
+    static associate(models) {
+      Subscription.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+    }
+  }
+
+  Subscription.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -37,13 +45,11 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   }, {
+    sequelize,
+    modelName: 'Subscription',
     tableName: 'subscriptions',
     timestamps: true
   });
-
-  Subscription.associate = (models) => {
-    Subscription.belongsTo(models.User, { foreignKey: 'userId' });
-  };
 
   return Subscription;
 };

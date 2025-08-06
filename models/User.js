@@ -1,41 +1,39 @@
-const fs = require("fs");
-const path = require("path");
-const Sequelize = require("sequelize");
-require("dotenv").config();
-
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
+require('dotenv').config();
+
 const db = {};
 
-// Crear instancia de Sequelize
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: "postgres",
-  protocol: "postgres",
-  logging: false,
+  dialect: 'postgres',
+  protocol: 'postgres',
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false,
-    },
+      rejectUnauthorized: false
+    }
   },
+  logging: false
 });
 
-// Cargar todos los modelos en el directorio actual (excepto index.js)
-fs.readdirSync(__dirname)
-  .filter(
-    (file) =>
-      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js",
+// Cargar todos los modelos
+fs
+  .readdirSync(__dirname)
+  .filter(file =>
+    file.indexOf('.') !== 0 &&
+    file !== basename &&
+    file.slice(-3) === '.js'
   )
-  .forEach((file) => {
-    const model = require(path.join(__dirname, file))(
-      sequelize,
-      Sequelize.DataTypes,
-    );
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
 
-// Ejecutar asociaciones si están definidas
-Object.keys(db).forEach((modelName) => {
-  if (typeof db[modelName].associate === "function") {
+// Ejecutar associate() si el modelo lo define
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });

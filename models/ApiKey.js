@@ -1,7 +1,14 @@
 
-// server/models/ApiKey.js
 module.exports = (sequelize, DataTypes) => {
-  const ApiKey = sequelize.define('ApiKey', {
+  const { Model } = require('sequelize');
+
+  class ApiKey extends Model {
+    static associate(models) {
+      ApiKey.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+    }
+  }
+
+  ApiKey.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -11,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    key: {
+    keyValue: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true
@@ -24,6 +31,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.JSON,
       defaultValue: []
     },
+    lastUsed: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    expiresAt: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -33,13 +48,11 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   }, {
+    sequelize,
+    modelName: 'ApiKey',
     tableName: 'api_keys',
     timestamps: true
   });
-
-  ApiKey.associate = (models) => {
-    ApiKey.belongsTo(models.User, { foreignKey: 'userId' });
-  };
 
   return ApiKey;
 };

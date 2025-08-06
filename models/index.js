@@ -1,73 +1,30 @@
-
+const fs = require("fs");
+const path = require("path");
+const Sequelize = require("sequelize");
 const { sequelize } = require('../config/database');
-const { DataTypes } = require('sequelize');
 
-// Import all models
-const User = require('./User');
-const Client = require('./Client');
-const Lead = require('./Lead');
-const Followup = require('./Followup');
-const Quotation = require('./Quotation');
-const ApiKey = require('./ApiKey');
-const Role = require('./Role');
-const Notification = require('./Notification');
-const Subscription = require('./Subscription');
+const basename = path.basename(__filename);
+const db = {};
 
-// Define associations
-const defineAssociations = () => {
-  // User associations
-  User.hasMany(Client, { foreignKey: 'assignedTo', as: 'clients' });
-  User.hasMany(Lead, { foreignKey: 'assignedTo', as: 'leads' });
-  User.hasMany(Followup, { foreignKey: 'assignedTo', as: 'followups' });
-  User.hasMany(Quotation, { foreignKey: 'assignedTo', as: 'quotations' });
-  User.hasMany(ApiKey, { foreignKey: 'userId', as: 'apiKeys' });
-  User.belongsTo(Role, { foreignKey: 'roleId', as: 'role' });
+// Cargar todos los modelos en el directorio actual (excepto index.js)
+fs.readdirSync(__dirname)
+  .filter(
+    (file) =>
+      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js",
+  )
+  .forEach((file) => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
+  });
 
-  // Client associations
-  Client.belongsTo(User, { foreignKey: 'assignedTo', as: 'assignedUser' });
-  Client.hasMany(Followup, { foreignKey: 'clientId', as: 'followups' });
-  Client.hasMany(Quotation, { foreignKey: 'clientId', as: 'quotations' });
+// Ejecutar asociaciones si están definidas
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
-  // Lead associations
-  Lead.belongsTo(User, { foreignKey: 'assignedTo', as: 'assignedUser' });
-  Lead.hasMany(Followup, { foreignKey: 'leadId', as: 'followups' });
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-  // Followup associations
-  Followup.belongsTo(User, { foreignKey: 'assignedTo', as: 'assignedUser' });
-  Followup.belongsTo(Client, { foreignKey: 'clientId', as: 'client' });
-  Followup.belongsTo(Lead, { foreignKey: 'leadId', as: 'lead' });
-
-  // Quotation associations
-  Quotation.belongsTo(User, { foreignKey: 'assignedTo', as: 'assignedUser' });
-  Quotation.belongsTo(Client, { foreignKey: 'clientId', as: 'client' });
-
-  // ApiKey associations
-  ApiKey.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-
-  // Role associations - already defined in Role model
-  Role.hasMany(User, { foreignKey: 'roleId', as: 'users' });
-
-  // Notification associations (if needed)
-  // Add specific associations for notifications when the model is properly defined
-
-  // Subscription associations (if needed)
-  // Add specific associations for subscriptions when the model is properly defined
-};
-
-// Initialize associations
-defineAssociations();
-
-// Export models
-module.exports = {
-  sequelize,
-  User,
-  Client,
-  Lead,
-  Followup,
-  Quotation,
-  ApiKey,
-  Role,
-  Notification,
-  Subscription
-};
-
+module.exports = db;
