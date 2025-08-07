@@ -1,5 +1,5 @@
 
-const { ApiKey, User } = require("../models");
+const { ApiKey } = require("../models");
 
 const checkApiKey = async (req, res, next) => {
   try {
@@ -13,23 +13,16 @@ const checkApiKey = async (req, res, next) => {
       where: { 
         key: apiKey,
         isActive: true 
-      },
-      include: [{
-        model: User,
-        attributes: ['id', 'email', 'name', 'roleId']
-      }]
+      }
     });
 
     if (!keyRecord) {
       return res.status(401).json({ message: "API Key inválida o inactiva" });
     }
 
-    // Adjuntar información del usuario a la request
+    // Adjuntar información básica a la request
     req.user = {
-      id: keyRecord.User.id,
-      email: keyRecord.User.email,
-      name: keyRecord.User.name,
-      roleId: keyRecord.User.roleId,
+      id: keyRecord.userId || null,
       apiKeyPermissions: keyRecord.permissions
     };
 
