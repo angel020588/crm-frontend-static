@@ -3,6 +3,10 @@ run = "npm install && npm run dev"
 modules = ["nodejs-20"]
 
 [[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
 localPort = 3001
 externalPort = 80
 
