@@ -31,8 +31,8 @@ export default function Subscription() {
     }
   };
 
-  useEffect(() => { 
-    fetchSubscription(); 
+  useEffect(() => {
+    fetchSubscription();
   }, [fetchSubscription]);
 
   return (

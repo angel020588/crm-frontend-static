@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -136,7 +135,9 @@ export default function Leads() {
     ? leads 
     : leads.filter(lead => lead.status === filterStatus);
 
-  useEffect(() => { fetchLeads(); }, [fetchLeads]);
+  useEffect(() => {
+    fetchLeads();
+  }, [fetchLeads]);
 
   if (loading) {
     return <div className="flex justify-center items-center h-64">Cargando leads...</div>;
@@ -218,7 +219,7 @@ export default function Leads() {
                 </span>
               </div>
             </div>
-            
+
             <div className="space-y-2 mb-4">
               <p className="text-sm">📧 {lead.email || 'Sin email'}</p>
               <p className="text-sm">📞 {lead.phone || 'Sin teléfono'}</p>
@@ -262,7 +263,7 @@ export default function Leads() {
             <h2 className="text-2xl font-bold mb-6">
               {editingLead ? "✏️ Editar Lead" : "➕ Nuevo Lead"}
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
@@ -336,7 +337,7 @@ export default function Leads() {
                   <option value="alto">Interés Alto</option>
                 </select>
               </div>
-              
+
               <textarea
                 placeholder="Notas adicionales..."
                 value={formData.notes}

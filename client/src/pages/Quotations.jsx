@@ -8,7 +8,7 @@ export default function Quotations() {
 
   useEffect(() => {
     fetchQuotations();
-  }, []);
+  }, [fetchQuotations]);
 
   const fetchQuotations = async () => {
     try {

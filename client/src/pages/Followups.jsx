@@ -18,11 +18,6 @@ export default function Followups() {
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchFollowups();
-    fetchClients();
-  }, []);
-
   const fetchFollowups = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -49,6 +44,11 @@ export default function Followups() {
       console.error('Error fetching clients:', err);
     }
   };
+
+  useEffect(() => {
+    fetchFollowups();
+    fetchClients();
+  }, [fetchFollowups, fetchClients]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

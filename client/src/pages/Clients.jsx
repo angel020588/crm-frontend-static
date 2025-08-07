@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -39,9 +38,9 @@ export default function Clients() {
         { name, email, phone, address },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setName(""); 
-      setEmail(""); 
-      setPhone(""); 
+      setName("");
+      setEmail("");
+      setPhone("");
       setAddress("");
       setError("");
       fetchClients();
@@ -59,9 +58,9 @@ export default function Clients() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setEditingClient(null);
-      setName(""); 
-      setEmail(""); 
-      setPhone(""); 
+      setName("");
+      setEmail("");
+      setPhone("");
       setAddress("");
       setError("");
       fetchClients();
@@ -99,8 +98,8 @@ export default function Clients() {
     setAddress("");
   };
 
-  useEffect(() => { 
-    fetchClients(); 
+  useEffect(() => {
+    fetchClients();
   }, [fetchClients]);
 
   if (loading) {
@@ -213,61 +212,61 @@ export default function Clients() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Nombre *
                 </label>
-                <input 
-                  type="text" 
-                  placeholder="Nombre completo" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                  required 
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                <input
+                  type="text"
+                  placeholder="Nombre completo"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Correo Electrónico
                 </label>
-                <input 
-                  type="email" 
-                  placeholder="correo@ejemplo.com" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                <input
+                  type="email"
+                  placeholder="correo@ejemplo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Teléfono
                 </label>
-                <input 
-                  type="text" 
-                  placeholder="+1 234 567 8900" 
-                  value={phone} 
-                  onChange={(e) => setPhone(e.target.value)} 
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                <input
+                  type="text"
+                  placeholder="+1 234 567 8900"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Dirección
                 </label>
-                <input 
-                  type="text" 
-                  placeholder="Dirección completa" 
-                  value={address} 
-                  onChange={(e) => setAddress(e.target.value)} 
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                <input
+                  type="text"
+                  placeholder="Dirección completa"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
             <div className="mt-6 flex space-x-3">
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {editingClient ? "Actualizar Cliente" : "Agregar Cliente"}
               </button>
               {editingClient && (
-                <button 
+                <button
                   type="button"
                   onClick={cancelEditing}
                   className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 font-medium focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -309,8 +308,8 @@ export default function Clients() {
                           >
                             Editar
                           </button>
-                          <button 
-                            onClick={() => deleteClient(client.id)} 
+                          <button
+                            onClick={() => deleteClient(client.id)}
                             className="text-red-600 hover:text-red-800 text-sm font-medium"
                           >
                             Eliminar

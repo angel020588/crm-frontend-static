@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -51,7 +50,7 @@ export default function Dashboard() {
         followups: followupsRes.data.slice(0, 5) || [],
         stats: statsRes.data || {}
       });
-      
+
       setUser(userRes.data.user || {});
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
