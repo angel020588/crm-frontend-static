@@ -1,5 +1,4 @@
-// config/database.js
-const { Sequelize } = require("sequelize");
+const { Sequelize, DataTypes } = require("sequelize");
 
 // Fuerza carga explícita desde archivo .env en raíz
 require("dotenv").config({ path: "./.env" });
@@ -33,5 +32,6 @@ const initDatabase = async () => {
 
 module.exports = {
   sequelize,
+  DataTypes, // <--- Exporta también DataTypes
   initDatabase,
 };

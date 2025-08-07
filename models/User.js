@@ -1,99 +1,212 @@
-const { Model } = require('sequelize');
+const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
+      const { Model } = require("sequelize");
+
+      module.exports = (sequelize, DataTypes) => {
+        class User extends Model {
+          static associate(models) {
+            // Relación con Client
+            User.hasMany(models.Client, {
+              foreignKey: "userId",
+              as: "clients",
+            });
+
+            // Relación con Lead
+            User.hasMany(models.Lead, {
+              foreignKey: "userId",
+              as: "leads",
+            });
+
+            // Relación con Followup
+            User.hasMany(models.Followup, {
+              foreignKey: "userId",
+              as: "followups",
+            });
+
+            // Relación con Quotation
+            User.hasMany(models.Quotation, {
+              foreignKey: "userId",
+              as: "quotations",
+            });
+
+            // Relación con Subscription
+            User.hasOne(models.Subscription, {
+              foreignKey: "userId",
+              as: "subscription",
+            });
+
+            // Relación con ApiKey
+            User.hasMany(models.ApiKey, {
+              foreignKey: "userId",
+              as: "apiKeys",
+            });
+
+            // Relación con Role
+            User.belongsTo(models.Role, {
+              foreignKey: "roleId",
+              as: "role",
+            });
+
+            // Relación con Notification
+            User.hasMany(models.Notification, {
+              foreignKey: "userId",
+              as: "notifications",
+            });
+          }
+        }
+
+        User.init(
+          {
+            id: {
+              type: DataTypes.INTEGER,
+              primaryKey: true,
+              autoIncrement: true,
+            },
+            name: {
+              type: DataTypes.STRING,
+              allowNull: false,
+            },
+            email: {
+              type: DataTypes.STRING,
+              allowNull: false,
+              unique: true,
+              validate: {
+                isEmail: true,
+              },
+            },
+            password: {
+              type: DataTypes.STRING,
+              allowNull: false,
+            },
+            roleId: {
+              type: DataTypes.INTEGER,
+              allowNull: false,
+              defaultValue: 1,
+              references: {
+                model: "Roles", // Asegúrate que coincida exactamente con el nombre de la tabla de roles
+                key: "id",
+              },
+            },
+            isActive: {
+              type: DataTypes.BOOLEAN,
+              defaultValue: true,
+            },
+            lastLogin: {
+              type: DataTypes.DATE,
+              allowNull: true,
+            },
+          },
+          {
+            sequelize,
+            modelName: "User",
+            tableName: "Users",
+            timestamps: true,
+          },
+        );
+
+        return User;
+      };
       // Relación con Client
       User.hasMany(models.Client, {
-        foreignKey: 'userId',
-        as: 'clients'
+        foreignKey: "userId",
+        as: "clients",
       });
 
       // Relación con Lead
       User.hasMany(models.Lead, {
-        foreignKey: 'userId',
-        as: 'leads'
+        foreignKey: "userId",
+        as: "leads",
       });
 
       // Relación con Followup
       User.hasMany(models.Followup, {
-        foreignKey: 'userId',
-        as: 'followups'
+        foreignKey: "userId",
+        as: "followups",
       });
 
       // Relación con Quotation
       User.hasMany(models.Quotation, {
-        foreignKey: 'userId',
-        as: 'quotations'
+        foreignKey: "userId",
+        as: "quotations",
       });
 
       // Relación con Subscription
       User.hasOne(models.Subscription, {
-        foreignKey: 'userId',
-        as: 'subscription'
+        foreignKey: "userId",
+        as: "subscription",
       });
 
       // Relación con ApiKey
       User.hasMany(models.ApiKey, {
-        foreignKey: 'userId',
-        as: 'apiKeys'
+        foreignKey: "userId",
+        as: "apiKeys",
       });
 
       // Relación con Role
       User.belongsTo(models.Role, {
-        foreignKey: 'roleId',
-        as: 'role'
+        foreignKey: "roleId",
+        as: "role",
       });
 
       // Relación con Notification
       User.hasMany(models.Notification, {
-        foreignKey: 'userId',
-        as: 'notifications'
+        foreignKey: "userId",
+        as: "notifications",
       });
     }
   }
 
-  User.init({
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true,
+  User.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      roleId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+        references: {
+          model: "Roles", // Asegúrate que coincida exactamente con el nombre de la tabla de roles
+          key: "id",
+        },
+      },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+      },
+      lastLogin: {
+        type: DataTypes.DATE,
+        allowNull: true,
       },
     },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    {
+      sequelize,
+      modelName: "User",
+      tableName: "Users",
+      timestamps: true,
     },
-    roleId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 1
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
-    lastLogin: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-  }, {
-    sequelize,
-    modelName: 'User',
-    tableName: 'Users',
-    timestamps: true,
-  });
+  );
 
   return User;
 };
