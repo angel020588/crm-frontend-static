@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ export default function ApiKeys() {
 
   const token = localStorage.getItem("token");
 
-  const fetchKeys = async () => {
+  const fetchKeys = useCallback(async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/apikeys", {
         headers: { Authorization: `Bearer ${token}` },
@@ -23,7 +23,7 @@ export default function ApiKeys() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   const createKey = async (e) => {
     e.preventDefault();
@@ -129,7 +129,7 @@ export default function ApiKeys() {
 
   useEffect(() => {
     fetchKeys();
-  }, []);
+  }, [fetchKeys]);
 
   if (loading) {
     return <div className="flex justify-center items-center h-64">Cargando...</div>;
