@@ -1,6 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback } from "react";
+import axios from "axios";
 
 export default function ApiKeys() {
   const [keys, setKeys] = useState([]);
@@ -31,7 +30,7 @@ export default function ApiKeys() {
       const res = await axios.post(
         "http://localhost:5000/api/apikeys/create",
         { description },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       // Mostrar la API Key generada en un modal o alert mejorado
@@ -42,7 +41,6 @@ export default function ApiKeys() {
 
       // Crear un modal personalizado para mostrar la API Key
       showApiKeyModal(newKey, description);
-
     } catch (err) {
       setError("Error al crear API Key");
       console.error("Error creating API key:", err);
@@ -50,8 +48,9 @@ export default function ApiKeys() {
   };
 
   const showApiKeyModal = (apiKey, desc) => {
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    const modal = document.createElement("div");
+    modal.className =
+      "fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50";
     modal.innerHTML = `
       <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div class="mt-3">
@@ -85,7 +84,7 @@ export default function ApiKeys() {
       await axios.post(
         "http://localhost:5000/api/apikeys/deactivate",
         { key },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       fetchKeys();
     } catch (err) {
@@ -99,7 +98,7 @@ export default function ApiKeys() {
       await axios.post(
         "http://localhost:5000/api/apikeys/activate",
         { key },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       fetchKeys();
     } catch (err) {
@@ -109,10 +108,15 @@ export default function ApiKeys() {
   };
 
   const deleteKey = async (id) => {
-    if (!window.confirm("¿Eliminar permanentemente esta API Key? Esta acción no se puede deshacer.")) return;
+    if (
+      !window.confirm(
+        "¿Eliminar permanentemente esta API Key? Esta acción no se puede deshacer.",
+      )
+    )
+      return;
     try {
       await axios.delete(`http://localhost:5000/api/apikeys/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       fetchKeys();
     } catch (err) {
@@ -132,15 +136,21 @@ export default function ApiKeys() {
   }, [fetchKeys]);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">Cargando...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">Cargando...</div>
+    );
   }
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Gestión de API Keys</h1>
-          <p className="text-gray-600 mt-1">Administra las claves de API para acceder a tu CRM programáticamente</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Gestión de API Keys
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Administra las claves de API para acceder a tu CRM programáticamente
+          </p>
         </div>
         <button
           onClick={() => setShowCreateForm(true)}
@@ -160,10 +170,14 @@ export default function ApiKeys() {
       {showCreateForm && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
           <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Crear Nueva API Key</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              Crear Nueva API Key
+            </h3>
             <form onSubmit={createKey}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Descripción</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Descripción
+                </label>
                 <input
                   type="text"
                   placeholder="Ej: Integración con mi app móvil"
@@ -198,11 +212,25 @@ export default function ApiKeys() {
         {keys.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-500">
-              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7 6h-2m-3-6V9a3 3 0 116 0v1M9 12l2 2 4-4m5 2a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7 6h-2m-3-6V9a3 3 0 116 0v1M9 12l2 2 4-4m5 2a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No hay API Keys</h3>
-              <p className="mt-1 text-sm text-gray-500">Crea tu primera API Key para comenzar a integrar con tu CRM.</p>
+              <h3 className="mt-2 text-sm font-medium text-gray-900">
+                No hay API Keys
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                Crea tu primera API Key para comenzar a integrar con tu CRM.
+              </p>
             </div>
           </div>
         ) : (
@@ -212,10 +240,14 @@ export default function ApiKeys() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        k.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {k.active ? '🟢 Activa' : '🔴 Inactiva'}
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          k.active
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {k.active ? "🟢 Activa" : "🔴 Inactiva"}
                       </span>
                     </div>
                     <p className="text-sm font-medium text-gray-900 mt-2">
@@ -234,7 +266,8 @@ export default function ApiKeys() {
                       </button>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
-                      Creada: {new Date(k.createdAt).toLocaleDateString('es-ES')}
+                      Creada:{" "}
+                      {new Date(k.createdAt).toLocaleDateString("es-ES")}
                     </p>
                   </div>
                   <div className="flex space-x-2">
@@ -269,15 +302,33 @@ export default function ApiKeys() {
 
       {/* Información sobre el uso de API Keys */}
       <div className="mt-8 bg-blue-50 border border-blue-200 rounded-md p-4">
-        <h3 className="text-sm font-medium text-blue-900">💡 Cómo usar tus API Keys</h3>
+        <h3 className="text-sm font-medium text-blue-900">
+          💡 Cómo usar tus API Keys
+        </h3>
         <div className="mt-2 text-sm text-blue-700">
-          <p>Incluye tu API Key en las peticiones HTTP usando uno de estos métodos:</p>
+          <p>
+            Incluye tu API Key en las peticiones HTTP usando uno de estos
+            métodos:
+          </p>
           <ul className="mt-2 list-disc list-inside space-y-1">
-            <li><strong>Header:</strong> <code className="bg-blue-100 px-1 rounded">X-API-Key: tu_api_key_aqui</code></li>
-            <li><strong>Query param:</strong> <code className="bg-blue-100 px-1 rounded">?api_key=tu_api_key_aqui</code></li>
+            <li>
+              <strong>Header:</strong>{" "}
+              <code className="bg-blue-100 px-1 rounded">
+                X-API-Key: tu_api_key_aqui
+              </code>
+            </li>
+            <li>
+              <strong>Query param:</strong>{" "}
+              <code className="bg-blue-100 px-1 rounded">
+                ?api_key=tu_api_key_aqui
+              </code>
+            </li>
           </ul>
           <p className="mt-2">
-            <strong>Endpoint base:</strong> <code className="bg-blue-100 px-1 rounded">http://localhost:5000/api/</code>
+            <strong>Endpoint base:</strong>{" "}
+            <code className="bg-blue-100 px-1 rounded">
+              http://localhost:5000/api/
+            </code>
           </p>
         </div>
       </div>
