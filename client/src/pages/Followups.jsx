@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +18,7 @@ export default function Followups() {
   });
   const navigate = useNavigate();
 
-  const fetchFollowups = async () => {
+  const fetchFollowups = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get("http://localhost:5000/api/followups", {
@@ -31,9 +31,9 @@ export default function Followups() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get("http://localhost:5000/api/clients", {
@@ -43,7 +43,7 @@ export default function Followups() {
     } catch (err) {
       console.error('Error fetching clients:', err);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchFollowups();

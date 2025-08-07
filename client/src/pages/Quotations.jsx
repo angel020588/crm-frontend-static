@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
 export default function Quotations() {
@@ -6,11 +6,7 @@ export default function Quotations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchQuotations();
-  }, [fetchQuotations]);
-
-  const fetchQuotations = async () => {
+  const fetchQuotations = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get('/api/quotations', {
@@ -23,7 +19,11 @@ export default function Quotations() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchQuotations();
+  }, [fetchQuotations]);
 
   if (loading) {
     return (
