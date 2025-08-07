@@ -1,0 +1,79 @@
+ Faltan dependencias en useEffect
+Las advertencias como:
+
+Código
+Falta la dependencia "fetchSubscription" del gancho de React useEffect
+salen cuando usas una función o variable dentro de un useEffect, pero no la incluye en el array de dependencias.
+
+Ejemplo de advertencia:
+
+js
+useEffect(() => {
+  fetchSubscription();
+}, []); // <- aquí falta fetchSubscription en el array
+Solución:
+Incluye la función en el conjunto de dependencias:
+
+js
+useEffect(() => {
+  fetchSubscription();
+}, [fetchSubscription]); // <- así se corrige
+Haga esto para cada advertencia similar en los archivos indicados ( Subscription.jsx, Leads.jsx, Dashboard.jsx, Clientes.jsx, ApiKeys.jsx).
+
+2. Importación no utilizada
+Código
+'useNavigate' está definido pero nunca se utiliza  no-unused-vars
+Solución:
+Eliminar la importación si no la usas:
+
+Diferencia
+-import { useNavigate } from "react-router-dom";
+3. Exportación anónima
+Código
+Asignar objeto a una variable antes de exportar como módulo predeterminado   import/no-anonymous-default-export
+En src/config/api.js, si tienes:
+
+js
+export default {
+  // config
+}
+Solución:
+Primero asigna a una variable, luego exporta:
+
+js
+const apiConfig = {
+  // config
+};
+export default apiConfig;
+4. Advertencia de uso obsoleto de fs.F_OK
+Código
+[DEP0176] Advertencia de desuso: fs.F_OK está obsoleto, utilice fs.constants.F_OK en su lugar
+Esto solo lo puedes corregir si tu proyecto tiene código que usa fs.F_OK.
+Busca en tu código algo como:
+
+js
+fs.access(path, fs.F_OK, callback);
+Cámbialo por:
+
+js
+fs.access(path, fs.constants.F_OK, callback);
+Si no usas Node para acceder a archivos directamente, puede ser una dependencia (puedes ignorar esta advertencia si tu aplicación funciona bien).
+
+5. ¿Quieres ignorar las advertencias?
+Agrega esto arriba del useEffect:
+
+js
+// eslint-disable-next-line react-hooks/exhaustive-deps
+Pero lo recomendable es arreglar el código y no ignorar el aviso.
+
+Resumen de pasos sugeridos (¡copia y pega!):
+Corrige tu useEffect así:
+
+js
+useEffect(() => {
+  fetchSubscription();
+}, [fetchSubscription]);
+(y repite para los otros archivos mencionados).
+
+Elimina imports no usados y exportaciones anónimas como los ejemplos de arriba.
+
