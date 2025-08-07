@@ -1,4 +1,3 @@
-
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -9,43 +8,43 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'userId',
         as: 'clients'
       });
-      
+
       // Relación con Lead
       User.hasMany(models.Lead, {
         foreignKey: 'userId',
         as: 'leads'
       });
-      
+
       // Relación con Followup
       User.hasMany(models.Followup, {
         foreignKey: 'userId',
         as: 'followups'
       });
-      
+
       // Relación con Quotation
       User.hasMany(models.Quotation, {
         foreignKey: 'userId',
         as: 'quotations'
       });
-      
+
       // Relación con Subscription
       User.hasOne(models.Subscription, {
         foreignKey: 'userId',
         as: 'subscription'
       });
-      
+
       // Relación con ApiKey
       User.hasMany(models.ApiKey, {
         foreignKey: 'userId',
         as: 'apiKeys'
       });
-      
+
       // Relación con Role
       User.belongsTo(models.Role, {
         foreignKey: 'roleId',
         as: 'role'
       });
-      
+
       // Relación con Notification
       User.hasMany(models.Notification, {
         foreignKey: 'userId',
@@ -79,11 +78,7 @@ module.exports = (sequelize, DataTypes) => {
     roleId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 1,
-      references: {
-        model: 'Roles',
-        key: 'id'
-      }
+      defaultValue: 1
     },
     isActive: {
       type: DataTypes.BOOLEAN,
