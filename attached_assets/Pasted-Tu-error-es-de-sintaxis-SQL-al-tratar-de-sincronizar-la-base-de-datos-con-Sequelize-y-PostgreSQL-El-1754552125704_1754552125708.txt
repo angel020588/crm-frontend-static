@@ -1,0 +1,59 @@
+Tu error es de sintaxis SQL al tratar de sincronizar la base de datos con Sequelize y PostgreSQL. El problema es que estás usando una instrucción SQL inválida:
+
+SQL
+ALTER TABLE "Users" ALTER COLUMN "roleId" SET DEFAULT 1 REFERENCES "Roles" ("id") ON DELETE CASCADE ON UPDATE CASCADE;
+No puedes usar REFERENCES en un ALTER COLUMN ... SET DEFAULT.
+La cláusula REFERENCES solo se usa al definir una columna nueva, no cuando cambias el valor por defecto.
+
+¿Por qué ocurre?
+Probablemente tienes en tu modelo Sequelize algo como esto:
+
+js
+roleId: {
+  type: DataTypes.INTEGER,
+  allowNull: false,
+  defaultValue: 1,
+  references: {
+    model: 'Roles',
+    key: 'id'
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+}
+Y estás usando sequelize.sync({ alter: true }) o sequelize.sync(), lo que intenta modificar la tabla y genera la instrucción SQL incorrecta.
+
+¿Cómo lo soluciono?
+1. No mezcles defaultValue y references en el alter
+Cuando Sequelize intenta cambiar ambas cosas a la vez, genera una instrucción inválida.
+
+Solución:
+Separa la definición de la clave foránea (foreign key) y el valor por defecto.
+
+2. Corrige tu modelo:
+Asegúrate de que tu modelo se vea así:
+
+js
+roleId: {
+  type: DataTypes.INTEGER,
+  allowNull: false,
+  defaultValue: 1, // Esto está bien
+  references: {
+    model: 'Roles',
+    key: 'id'
+  }
+  // onDelete y onUpdate deberían ir en la asociación, no aquí
+}
+Nota: Lo recomendado es definir las reglas de ON DELETE/UPDATE en la asociación, así:
+
+js
+User.belongsTo(Role, { foreignKey: 'roleId', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+3. Si la tabla ya existe y quieres migrar correctamente:
+No uses sequelize.sync({ alter: true }) para estos cambios complejos.
+Usa migraciones con sequelize-cli para crear o modificar claves foráneas y defaults.
+4. ¿Solución rápida para desarrollo?
+Borra la tabla Users y déjala que Sequelize la vuelva a crear con sync({ force: true }) (solo si puedes perder los datos).
+O, edita manualmente la tabla en la base de datos para que la columna roleId tenga el default y la foreign key correctamente.
+Resumen
+No puedes usar REFERENCES en ALTER COLUMN ... SET DEFAULT.
+Define la foreign key y el default value en el modelo, pero no esperes que Sequelize pueda migrar ambos a la vez en una tabla existente.
+Usa migraciones para cambios avanzados o recrea la tabla si es posible.
